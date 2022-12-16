@@ -24,7 +24,9 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
             if (isNoResult) return interaction.followUp("No reagents found.");
             // eslint-disable-next-line no-useless-escape
             const LINK_REG = /\/jp\/product\/detail\/[A-Z0-9\-]{6,}\.html/gmu;
-            let Descs = [...dom.window.document.querySelectorAll("div.product-name:not(scope: > span.st)").values()];
+            let Descs = [...dom.window.document.querySelectorAll("div.product-name").values()].filter(
+                (e) => !e.querySelector(":scope > span.st")
+            );
             if (Descs.length > 10) Descs.length = 10;
             Descs = Descs.slice(0, ~~(Descs.length / 2));
             let Details = [...dom.window.document.querySelectorAll("div.product-list-in:not(div.st-discon)").values()];
@@ -46,22 +48,17 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
                     .trim()
             );
             const Names = Descs.map((elim) =>
-                (elim.querySelector("em.name")?.innerHTML ?? "")
-                    .replaceAll("\t", "")
-                    .replaceAll("\n", "")
-                    .split("<")[0]!
-                    .trim()
+                elim.querySelector("em.name")!.innerHTML.replaceAll("\t", "").replaceAll("\n", "").split("<")[0]!.trim()
             );
             const codes = Details.map((elim) =>
-                (elim.querySelector("div.lb-code")!.querySelector("dd")?.innerHTML ?? "")
-                    .replaceAll("\t", "")
-                    .replaceAll("\n", "")
-                    .trim()
+                [...elim.querySelectorAll("div.lb-code")!.values()].map((e) =>
+                    (e.querySelector("dd")?.innerHTML ?? "").replaceAll("\t", "").replaceAll("\n", "").trim()
+                )
             );
             const CAS = Details.map((elim) =>
                 (
-                    [...elim.querySelector("div.product-set1")!.querySelectorAll("dl").values()]
-                        .find((e) => e.querySelector("dt")!.innerHTML.startsWith("CAS"))
+                    [...elim.querySelector("div.product-set1")!.querySelectorAll("dl")!.values()]
+                        .find((e) => (e.querySelector("dt")?.innerHTML ?? "").startsWith("CAS"))
                         ?.querySelector("dd")?.innerHTML ?? ""
                 )
                     .replaceAll("\t", "")
@@ -69,37 +66,41 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
                     .trim()
             );
             const sizes = Details.map((elim) =>
-                (elim.querySelector("td.product-size")!.querySelector("div.product-tbl-in")?.innerHTML ?? "")
-                    .replaceAll("\t", "")
-                    .replaceAll("\n", "")
-                    .trim()
+                [...elim.querySelectorAll("td.product-size")!.values()].map((e) =>
+                    (e.querySelector("div.product-tbl-in")?.innerHTML ?? "")
+                        .replaceAll("\t", "")
+                        .replaceAll("\n", "")
+                        .trim()
+                )
             );
             const prices = Details.map((elim) =>
-                (elim.querySelector("td.product-size")!.querySelector("div.product-tbl-in")?.innerHTML ?? "")
-                    .replaceAll("\t", "")
-                    .replaceAll("\n", "")
-                    .trim()
+                [...elim.querySelectorAll("td.product-price")!.values()].map((e) =>
+                    (e.querySelector("div.product-tbl-in")!.querySelector("dd")?.innerHTML ?? "")
+                        .replaceAll("\t", "")
+                        .replaceAll("\n", "")
+                        .trim()
+                )
             ).map((e) => (e ? e : null));
             const fields: APIEmbedField[] = [];
-            for (let i = 0; i <= Descs.length; i++) {
+            for (let i = 0; i < Descs.length; i++) {
                 const obj: APIEmbedField = { name: Names[i]!, value: "" };
                 let value = "";
-                for (let n = 0; n <= codes[i]!.length; n++) {
+                for (let n = 0; n < codes[i]!.length; n++) {
                     if (value) value += "\n";
                     let str = "";
                     str += codes[i]![n];
-                    str = str.padStart(12);
+                    str = str.padEnd(12);
                     str += sizes[i]![n];
-                    str = str.padStart(20);
+                    str = str.padEnd(20);
                     str += prices[i]![n] || "Not for sell";
                     value += str;
                 }
-                const desc: string[] = [];
-                desc.push("Manufacture: " + manufactures[i]!);
-                if (Grades[i]) desc.push("Grade: " + Grades[i]!);
-                if (CAS[i]) desc.push("CAS RN: " + CAS[i]!);
+                const desc = [];
+                desc.push("Manufacture: " + manufactures[i]);
+                if (Grades[i]) desc.push("Grade: " + Grades[i]);
+                if (CAS[i]) desc.push("CAS RN: " + CAS[i]);
                 if (links[i]) desc.push(`[Original link](${links[i]})`);
-                value = desc.join("\n") + value;
+                if (desc.length) value = desc.join("\n") + "\n" + value;
                 obj.value = value;
                 fields.push(obj);
             }
