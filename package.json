@@ -18,7 +18,8 @@
         "@types/jsdom": "^20.0.1",
         "axios": "^1.2.1",
         "discord-api-types": "^0.37.23",
-        "discord.js": "^14.7.1"
+        "discord.js": "^14.7.1",
+        "jsdom": "^20.0.3"
     },
     "devDependencies": {
         "@types/node": "^18.11.15",
