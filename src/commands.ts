@@ -16,5 +16,13 @@ export const CommandData: { [name: string]: { id?: Snowflake; data: ApplicationC
                 },
             ],
         },
+        id: "1053217885721464895",
+    },
+    ping: {
+        data: {
+            name: "ping",
+            description: "Returns ping",
+        },
+        id: "1053218590737838181",
     },
 };
