@@ -114,7 +114,7 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
                 })
                 .addFields(fields);
 
-            return interaction.reply({ embeds: [Embed], fetchReply: true });
+            return interaction.followUp({ embeds: [Embed], fetchReply: true });
         })
         .catch((e: AxiosError) => interaction.followUp(e.toString()));
 };
