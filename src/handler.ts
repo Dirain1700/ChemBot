@@ -23,6 +23,6 @@ export default () => {
 
         filePath = "./commands/" + filePath;
 
-        (await import(filePath))(interaction);
+        (await import(filePath)).default(interaction);
     });
 };
