@@ -8,6 +8,6 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
     const now = Date.now();
     const API_LAG = now - interaction.createdTimestamp;
     interaction
-        .reply({ content: `WebSocket: ${client.ws.ping}ms\nAPI End Point: ${API_LAG}`, fetchReply: true })
-        .then((m) => m.edit(m.content + `\nCPU Loss time: ${Date.now() - now - API_LAG}`));
+        .reply({ content: `WebSocket: ${client.ws.ping}ms\nAPI End Point: ${API_LAG}ms`, fetchReply: true })
+        .then((m) => m.edit(m.content + `\nCPU Loss time: ${Date.now() - now - API_LAG}ms`));
 };
