@@ -1,0 +1,45 @@
+{
+    "name": "chembot",
+    "version": "0.0.0",
+    "description": "No bot, No life.",
+    "main": "index.js",
+    "scripts": {
+        "start": "node -r source-map-support/register dist/src/index.js",
+        "pre-tsc": "tsc -p tsconfig.json --noEmit",
+        "tsc": "tsc -p tsconfig.json",
+        "build": "npm run write && npm run lint-fix && npm run tsc",
+        "ci": "npm run check && npm run lint && npm run pre-tsc",
+        "lint": "eslint \"src/**/*.ts\"",
+        "lint-fix": "eslint --fix \"src/**/*.ts\"",
+        "write": "prettier --write .",
+        "check": "prettier --check ."
+    },
+    "dependencies": {
+        "@types/jsdom": "^20.0.1",
+        "axios": "^1.2.1",
+        "discord-api-types": "^0.37.23",
+        "discord.js": "^14.7.1"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.15",
+        "@types/prettier": "^2.7.1",
+        "@typescript-eslint/eslint-plugin": "5.46.1",
+        "@typescript-eslint/parser": "^5.46.1",
+        "eslint": "^8.29.0",
+        "prettier": "^2.8.1",
+        "source-map-support": "^0.5.21",
+        "typescript": "^4.9.4"
+    },
+    "engines": {
+        "node": ">=16.9.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Dirain1700/ChemBot.git"
+    },
+    "author": "Dirain1700",
+    "bugs": {
+        "url": "https://github.com/Dirain1700/ChemBot/issues"
+    },
+    "license": "MIT"
+}
