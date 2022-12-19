@@ -3,7 +3,7 @@
 import { JSDOM } from "jsdom";
 import { EmbedBuilder } from "discord.js";
 
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 import type { APIEmbedField } from "discord-api-types/v10";
 import type { AxiosResponse, AxiosError } from "axios";
 
@@ -17,11 +17,11 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
     const url = (reg: string) => "https://labchem-wako.fujifilm.com/jp/product/result/product.html?fw=" + reg;
     const domain = "https://labchem-wako.fujifilm.com";
     axios(url(name))
-        .then((res: AxiosResponse): Promise<Message> => {
+        .then((res: AxiosResponse): void => {
             /* eslint-disable @typescript-eslint/no-non-null-assertion */
             const dom = new JSDOM(res.data);
             const isNoResult = dom.window.document.querySelectorAll("div.no-result").length > 0;
-            if (isNoResult) return interaction.followUp("No reagents found.");
+            if (isNoResult) return void interaction.followUp("No reagents found.");
             // eslint-disable-next-line no-useless-escape
             const LINK_REG = /\/jp\/product\/detail\/[A-Z0-9\-]{6,}\.html/gmu;
             let Descs = [...dom.window.document.querySelectorAll("div.product-name").values()].filter(
@@ -114,7 +114,7 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
                 })
                 .addFields(fields);
 
-            return interaction.followUp({ embeds: [Embed], fetchReply: true });
+            interaction.followUp({ embeds: [Embed], fetchReply: true });
         })
         .catch((e: AxiosError) => interaction.followUp(e.toString()));
 };
