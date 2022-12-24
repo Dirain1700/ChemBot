@@ -11,8 +11,8 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
     if (!client.isReady() || !interaction.channel) return;
 
     const name = interaction.options.getString("name", true);
-    if (!name) interaction.reply("Error: No arguments provided.");
-    interaction.deferReply();
+    if (!name) interaction.reply("Error: No arguments provided.").catch(console.error);
+    interaction.deferReply().catch(console.error);
 
     const url = (reg: string) => "https://labchem-wako.fujifilm.com/jp/product/result/product.html?fw=" + reg;
     const domain = "https://labchem-wako.fujifilm.com";
@@ -22,8 +22,7 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
             const dom = new JSDOM(res.data);
             const isNoResult = dom.window.document.querySelectorAll("div.no-result").length > 0;
             if (isNoResult) return void interaction.followUp("No reagents found.");
-            // eslint-disable-next-line no-useless-escape
-            const LINK_REG = /\/jp\/product\/detail\/[A-Z0-9\-]{6,}\.html/gmu;
+            const LINK_REG = /\/jp\/product\/detail\/[A-Z0-9-]{6,}\.html/gmu;
             let Descs = [...dom.window.document.querySelectorAll("div.product-name").values()].filter(
                 (e) => !e.querySelector(":scope > span.st")
             );
@@ -114,7 +113,9 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
                 })
                 .addFields(fields);
 
-            interaction.followUp({ embeds: [Embed], fetchReply: true });
+            interaction
+                .followUp({ embeds: [Embed], fetchReply: true })
+                .catch((error) => interaction.followUp(error.stack).catch(console.error));
         })
-        .catch((e: AxiosError) => interaction.followUp(e.toString()));
+        .catch((e: AxiosError) => interaction.followUp(e.toString()).catch(console.error));
 };
