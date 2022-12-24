@@ -104,7 +104,7 @@ export default async (interaction: ChatInputCommandInteraction<"cached">) => {
                 fields.push(obj);
             }
             const Embed = new EmbedBuilder()
-                .setTitle("Reagent(s) available in Wako")
+                .setTitle("Reagent(s) available from Wako")
                 .setURL(url(name))
                 .setFooter({
                     text: `Note: These are current as of ${new Date().toLocaleString("ja-jp", {
